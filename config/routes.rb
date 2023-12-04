@@ -6,6 +6,8 @@ Rails.application.routes.draw do
   get 'up' => 'rails/health#show', as: :rails_health_check
 
   # Defines the root path route ("/")
+  root to: 'static#home'
+
+  # Route for fetching a random greeting
   get '/random_greeting', to: 'greetings#random_greeting'
-  # root "posts#index"
 end
