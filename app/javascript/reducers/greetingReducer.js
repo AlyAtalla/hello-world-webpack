@@ -1,49 +1,38 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-
-// Initial state
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 const initialState = {
-  randomGreeting: '',
-  status: 'idle',
+  greeting: [],
+  isLoading: true,
   error: null
-};
-
-// Async thunk
-export const fetchRandomGreeting = createAsyncThunk(
-  'greeting/fetchRandomGreeting',
-  async (_, { rejectWithValue }) => {
-    try {
-      // Replace with your async request
-      const response = await fetch('https://api.example.com/greeting');
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      const data = await response.json();
-      return data.greeting;
-    } catch (err) {
-      return rejectWithValue(err.message);
+}
+const url = "/random_greeting"
+export const getGreetingsAsync = createAsyncThunk(
+  'greetings/Async',
+  async() => {
+    try{
+      const res = await fetch(url)
+      const data = await res.json()
+      return data
+    }catch(e){
+      return e.message
     }
   }
-);
-
-// Slice
+)
 const greetingSlice = createSlice({
-  name: 'greeting',
+  name: 'greetings',
   initialState,
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchRandomGreeting.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(fetchRandomGreeting.fulfilled, (state, { payload }) => {
-        state.status = 'idle';
-        state.randomGreeting = payload;
-      })
-      .addCase(fetchRandomGreeting.rejected, (state, { payload }) => {
-        state.status = 'idle';
-        state.error = payload;
-      });
+  extraReducers(builder){
+    builder.addCase(getGreetingsAsync.pending, (state)=> ({
+      ...state,
+      isLoading: true
+    })).addCase(getGreetingsAsync.fulfilled, (state, action)=> ({
+      ...state,
+      greeting: action.payload,
+      isLoading: false
+    })).addCase(getGreetingsAsync.rejected, (state, action)=> ({
+      ...state,
+      isLoading: false,
+      error: action.error.message
+    }))
   }
-});
-
-export default greetingSlice.reducer;
+})
+export default greetingSlice.reducer

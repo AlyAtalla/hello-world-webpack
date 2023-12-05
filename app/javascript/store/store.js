@@ -1,7 +1,11 @@
-import { legacy_createStore as createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
-import rootReducer from '../reducers';
-
-const store = createStore(rootReducer, applyMiddleware(thunk));
-
-export default store;
+import { combineReducers, configureStore  } from "@reduxjs/toolkit";
+import greetingReducer from "../reducers/greetingReducer";
+const rootReducer = combineReducers({
+  greetings: greetingReducer
+})
+export default function setupStore(preloadedState){
+  return configureStore({
+    reducer : rootReducer,
+    preloadedState
+  })
+}

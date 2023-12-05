@@ -1,19 +1,19 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchRandomGreeting } from '../actions/greetingActions';
+import { getGreetingsAsync } from '../reducers/greetingReducer';
+import { useSelector, useDispatch } from 'react-redux';
 const Greeting = () => {
-  const dispatch = useDispatch();
-
+  const { greeting, isLoading, error } = useSelector((state ) => state.greetings)
+  const dispatch = useDispatch()
   useEffect(() => {
-    dispatch(fetchRandomGreeting());
-  }, [dispatch]);
-
-  const randomGreeting = useSelector(state => state.greeting.randomGreeting);
-
+    dispatch(getGreetingsAsync())
+  }, [dispatch])
   return (
     <div>
       <h1>Random Greeting:</h1>
-      <p>{randomGreeting}</p>
+      {isLoading && <h2>Loading...</h2>}
+      {error && <h2>{error?.message}</h2>}
+      {greeting && <p>{greeting.content}</p>}
     </div>
   );
 };
+export default Greeting;
